@@ -1,0 +1,1 @@
+[{"username": "admin", "password": "admin", "is_superuser": true, "is_staff": true, "email": "admin@mail.ru"}, {"username": "user1", "password": 123, "email": "user1@mail.ru"}, {"username": "user2", "password": 123, "email": "user2@mail.ru"}]
