@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.http import urlencode
 
-from todo.models import ProjectModel
+from todo.models import ProjectModel, TodoModel
 
 
 @admin.register(ProjectModel)
@@ -20,3 +20,9 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display = ['name', 'url', 'users_count']
 
     users_count.short_description = 'Количество пользователей на проекте'
+
+
+@admin.register(TodoModel)
+class TodoModelAdmin(admin.ModelAdmin):
+    list_display = ['description', 'project', 'created_at', 'updated_at', 'user', 'close']
+    ordering = ['-close', '-created_at']
