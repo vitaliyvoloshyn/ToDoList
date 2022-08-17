@@ -5,4 +5,5 @@ from users.models import CustomUser
 
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['username', 'first_name','last_name','email','date_joined']
+    list_filter = ['date_joined']
