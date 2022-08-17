@@ -29,3 +29,7 @@ class TodoModel(models.Model):
     class Meta:
         verbose_name = 'Заметка'
         verbose_name_plural = 'Заметки'
+
+    def delete(self, using=None, keep_parents=False):
+        self.close = 'Закрыта'
+        self.save()
