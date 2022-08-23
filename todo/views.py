@@ -18,7 +18,7 @@ class TodoModelLimitOffsetPagination(LimitOffsetPagination):
 class ProjectModelViewSet(ModelViewSet):
     queryset = ProjectModel.objects.all()
     serializer_class = ProjectModelSerializer
-    pagination_class = ProjectModelLimitOffsetPagination
+    # pagination_class = ProjectModelLimitOffsetPagination
 
     def get_queryset(self):
         find = self.request.query_params.get('name')
@@ -30,7 +30,7 @@ class ProjectModelViewSet(ModelViewSet):
 class TodoModelViewSet(ModelViewSet):
     queryset = TodoModel.objects.all()
     serializer_class = TodoModelSerializer
-    pagination_class = TodoModelLimitOffsetPagination
+    # pagination_class = TodoModelLimitOffsetPagination
 
     def get_queryset(self):
         self._filter_by_name(self.request.query_params.get('name'))
