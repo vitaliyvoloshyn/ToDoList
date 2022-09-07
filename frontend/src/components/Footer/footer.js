@@ -1,5 +1,5 @@
 import React from "react";
-const Footer = ({ footer }) => {
+const Footer = () => {
   return (
     <div className="container">
       <footer className="py-3 my-4">
