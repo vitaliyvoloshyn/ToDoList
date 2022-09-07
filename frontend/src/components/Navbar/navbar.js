@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Navbar = ({ navbar }) => {
+const Navbar = (props) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="container-fluid">
@@ -36,6 +36,28 @@ const Navbar = ({ navbar }) => {
               <Link className="nav-link active" aria-current="page" to="/todos">
                 Заметки
               </Link>
+            </li>
+
+            <li className="nav-item">
+              {props.isAuth() ? (
+                <>
+                  <h6>Здравствуйте, {props.user}</h6>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => props.logOut()}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link
+                  className="nav-link active"
+                  aria-current="page"
+                  to="/login"
+                >
+                  Login
+                </Link>
+              )}
             </li>
           </ul>
           <form className="d-flex">

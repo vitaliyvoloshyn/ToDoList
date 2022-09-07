@@ -1,6 +1,9 @@
 from datetime import date, timedelta
 
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from .models import ProjectModel, TodoModel
@@ -57,3 +60,12 @@ class TodoModelViewSet(ModelViewSet):
             pass
         except ValueError as e:
             self.queryset = self.queryset.filter(id=0)
+
+
+class ObtainAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key, 'user': user.username})

@@ -1,4 +1,5 @@
 import React from "react";
+
 const UserItem = ({ user, index }) => {
   return (
     <tbody>
@@ -13,7 +14,7 @@ const UserItem = ({ user, index }) => {
   );
 };
 
-const UserList = function ({ users }) {
+const UserList = ({ users }) => {
   return (
     <table className="table table-striped">
       <thead>
