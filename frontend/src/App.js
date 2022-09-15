@@ -9,6 +9,7 @@ import axios from "axios";
 import TodoList from "./components/todo";
 import ProjectItem from "./components/project_item";
 import AuthForm from "./components/AuthForm";
+import CreateTodoForm from "./components/CreateTodoForm";
 
 class App extends React.Component {
   constructor(props) {
@@ -82,7 +83,32 @@ class App extends React.Component {
     );
   }
 
+  deleteTodo(id) {
+    console.log("delete:", id);
+    const headers = this.get_headers();
+    fetch(`http://127.0.0.1:8000/api/todo/${id}`, {
+      method: "DELETE",
+      headers: headers,
+      cache: "reload",
+    }).then((response) => {
+      console.log(response);
+      this.get_data();
+    });
+
+    // .delete(`http://127.0.0.1:8000/api/todo/${id}`, { headers, headers })
+    // .then((response) => {
+    //   console.log(response);
+    //   this.get_data();
+    // })
+    // .catch((error) => console.log(error));
+  }
+
+  createTodo(id) {
+    console.log("d");
+  }
+
   get_data() {
+    console.log("get_data");
     let headers = this.get_headers();
     axios
       .get("http://127.0.0.1:8000/api/users", { headers: headers })
@@ -111,6 +137,7 @@ class App extends React.Component {
         });
       })
       .catch((error) => console.log(error));
+    console.log(this.state.todos);
   }
 
   render() {
@@ -158,8 +185,14 @@ class App extends React.Component {
               <Route
                 exact
                 path="/todos"
-                element={<TodoList todos={this.state.todos} />}
+                element={
+                  <TodoList
+                    todos={this.state.todos}
+                    deleteTodo={(id) => this.deleteTodo(id)}
+                  />
+                }
               />
+              <Route exact path="/todos/create" element={<CreateTodoForm />} />
             </Routes>
           </div>
           <Footer />

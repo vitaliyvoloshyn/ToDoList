@@ -24,5 +24,5 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(TodoModel)
 class TodoModelAdmin(admin.ModelAdmin):
-    list_display = ['description', 'project', 'created_at', 'updated_at', 'user', 'close']
+    list_display = ['id','description', 'project', 'created_at', 'updated_at', 'user', 'close']
     ordering = ['-close', '-created_at']
