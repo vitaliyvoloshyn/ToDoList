@@ -50,7 +50,9 @@ class App extends React.Component {
 
   get_headers() {
     if (this.isAuth()) {
-      return { Authorization: "Token " + this.state.token };
+      return {
+        Authorization: "Token " + this.state.token,
+      };
     }
     return {};
   }
@@ -91,7 +93,6 @@ class App extends React.Component {
       headers: headers,
       cache: "reload",
     }).then((response) => {
-      console.log(response);
       this.get_data();
     });
 
@@ -103,15 +104,34 @@ class App extends React.Component {
     // .catch((error) => console.log(error));
   }
 
-  createTodo(id) {
-    console.log("d");
+  createTodo(project, user, description) {
+    console.log("!!!", project, user, description);
+    const headers = this.get_headers();
+    let data = { project: project, user: user, description: description };
+    axios
+      .post("http://127.0.0.1:8000/api/todo/", data, { headers: headers })
+      .then(() => {
+        this.get_data();
+      })
+      .catch((error) => console.log(error));
+    // fetch("http://127.0.0.1:8000/api/todo/", {
+    //   method: "POST",
+    //   headers: headers,
+    //   body: JSON.stringify(data),
+    //   cache: "reload",
+    // }).then(() => {
+    //   this.get_data();
+    // });
   }
 
   get_data() {
     console.log("get_data");
     let headers = this.get_headers();
+
     axios
-      .get("http://127.0.0.1:8000/api/users", { headers: headers })
+      .get("http://127.0.0.1:8000/api/users/?version=1.2", {
+        headers: headers,
+      })
       .then((response) => {
         const users = response.data;
         this.setState({
@@ -119,6 +139,7 @@ class App extends React.Component {
         });
       })
       .catch((error) => console.log(error));
+
     axios
       .get("http://127.0.0.1:8000/api/projects", { headers: headers })
       .then((response) => {
@@ -183,16 +204,26 @@ class App extends React.Component {
               />
 
               <Route
-                exact
                 path="/todos"
                 element={
                   <TodoList
                     todos={this.state.todos}
-                    deleteTodo={(id) => this.deleteTodo(id)}
+                    deleteTodo={(id) => this.deleteTodo(id).bind(this)}
                   />
                 }
               />
-              <Route exact path="/todos/create" element={<CreateTodoForm />} />
+              <Route
+                path="/todos/create"
+                element={
+                  <CreateTodoForm
+                    users={this.state.users}
+                    projects={this.state.projects}
+                    createTodo={(project, user, description) =>
+                      this.createTodo(project, user, description).bind(this)
+                    }
+                  />
+                }
+              />
             </Routes>
           </div>
           <Footer />
