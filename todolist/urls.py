@@ -20,7 +20,6 @@ router = DefaultRouter()
 router.register('users', CustomUserViewSet)
 router.register('projects', ProjectModelViewSet)
 router.register('todo', TodoModelViewSet)
-print(router.urls)
 
 # Open-API swagger с использованием библиотеки drf-yasg
 schema_view = get_schema_view(

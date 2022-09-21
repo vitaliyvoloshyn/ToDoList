@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
 
 const CreateTodoForm = ({ users = null, projects = null, createTodo }) => {
   console.log(users);
@@ -14,7 +15,6 @@ const CreateTodoForm = ({ users = null, projects = null, createTodo }) => {
   function handleSubmit(event) {
     event.preventDefault();
     createTodo(state.currentProject, state.currentUser, state.description);
-    event.preventDefault();
   }
 
   const onChange = (event) => {

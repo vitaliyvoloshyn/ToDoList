@@ -22,6 +22,7 @@ class TodoModelLimitOffsetPagination(LimitOffsetPagination):
 class ProjectModelViewSet(ModelViewSet):
     queryset = ProjectModel.objects.all()
     serializer_class = ProjectModelSerializer
+    permission_classes = [DjangoModelPermissions]
     # pagination_class = ProjectModelLimitOffsetPagination
 
     def get_queryset(self):
