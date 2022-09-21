@@ -5,6 +5,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import DjangoModelPermissions
 
 from .models import ProjectModel, TodoModel
 from .serializers import ProjectModelSerializer, TodoModelSerializer
@@ -21,6 +22,7 @@ class TodoModelLimitOffsetPagination(LimitOffsetPagination):
 class ProjectModelViewSet(ModelViewSet):
     queryset = ProjectModel.objects.all()
     serializer_class = ProjectModelSerializer
+    permission_classes = [DjangoModelPermissions]
     # pagination_class = ProjectModelLimitOffsetPagination
 
     def get_queryset(self):
@@ -31,15 +33,16 @@ class ProjectModelViewSet(ModelViewSet):
 
 
 class TodoModelViewSet(ModelViewSet):
-    queryset = TodoModel.objects.all()
+    queryset = TodoModel.objects.filter(close='Открыта')
     serializer_class = TodoModelSerializer
+    permission_classes = [DjangoModelPermissions]
     # pagination_class = TodoModelLimitOffsetPagination
 
-    def get_queryset(self):
-        self._filter_by_name(self.request.query_params.get('name'))
-        self._filter_by_date_from(self.request.query_params.get('datefrom'))
-        self._filter_by_date_to(self.request.query_params.get('dateto'))
-        return self.queryset
+    # def get_queryset(self):
+    #     self._filter_by_name(self.request.query_params.get('name'))
+    #     self._filter_by_date_from(self.request.query_params.get('datefrom'))
+    #     self._filter_by_date_to(self.request.query_params.get('dateto'))
+    #     return self.queryset
 
     def _filter_by_name(self, find: str = None):
         if find:

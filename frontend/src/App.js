@@ -9,6 +9,9 @@ import axios from "axios";
 import TodoList from "./components/todo";
 import ProjectItem from "./components/project_item";
 import AuthForm from "./components/AuthForm";
+import CreateTodoForm from "./components/CreateTodoForm";
+import CreateProjectForm from "./components/CreateProjectForm";
+import { Navigate } from "react-router-dom";
 
 class App extends React.Component {
   constructor(props) {
@@ -19,6 +22,7 @@ class App extends React.Component {
       todos: [],
       token: "",
       user: "",
+      redirect: false,
     };
   }
 
@@ -49,7 +53,11 @@ class App extends React.Component {
 
   get_headers() {
     if (this.isAuth()) {
-      return { Authorization: "Token " + this.state.token };
+      return {
+        Authorization: "Token " + this.state.token,
+
+        // "Cache-Control": "no-store",
+      };
     }
     return {};
   }
@@ -82,10 +90,74 @@ class App extends React.Component {
     );
   }
 
-  get_data() {
-    let headers = this.get_headers();
+  deleteTodo(id) {
+    console.log("delete:", id);
+    const headers = this.get_headers();
+    fetch(`http://127.0.0.1:8000/api/todo/${id}`, {
+      method: "DELETE",
+      headers: headers,
+      cache: "reload",
+    }).then((response) => {
+      this.get_data();
+    });
+
+    // .delete(`http://127.0.0.1:8000/api/todo/${id}`, { headers, headers })
+    // .then((response) => {
+    //   console.log(response);
+    //   this.get_data();
+    // })
+    // .catch((error) => console.log(error));
+  }
+
+  deleteProject(id) {
+    const headers = this.get_headers();
+    fetch(`http://127.0.0.1:8000/api/projects/${id}/`, {
+      method: "DELETE",
+      headers: headers,
+      cache: "reload",
+    }).then((response) => {
+      this.setState({
+        projects: this.state.projects.filter((item) => item.id !== id),
+      });
+    });
+  }
+
+  createTodo(project, user, description) {
+    const headers = this.get_headers();
+    let data = { project: project, user: user, description: description };
     axios
-      .get("http://127.0.0.1:8000/api/users", { headers: headers })
+      .post("http://127.0.0.1:8000/api/todo/", data, { headers: headers })
+      .then(() => {
+        this.get_data();
+        this.setState({ redirect: "/todos" });
+      })
+      .catch((error) => console.log(error));
+  }
+
+  createProject(project, url, user) {
+    const headers = this.get_headers();
+    let data = { name: project, url: url, user: user };
+    axios
+      .post("http://127.0.0.1:8000/api/projects/", data, { headers: headers })
+      .then(() => {
+        this.get_data();
+        this.setState({ redirect: "/projects" });
+      })
+      .catch((error) => console.log(error));
+  }
+
+  get_data() {
+    // сбрасываем значение редиректа в стэйте
+    this.setState({ redirect: false });
+
+    console.log("redirect get_data", this.state.redirect);
+    console.log("get_data");
+    let headers = this.get_headers();
+
+    axios
+      .get("http://127.0.0.1:8000/api/users/?version=1.2", {
+        headers: headers,
+      })
       .then((response) => {
         const users = response.data;
         this.setState({
@@ -93,12 +165,14 @@ class App extends React.Component {
         });
       })
       .catch((error) => console.log(error));
+
     axios
       .get("http://127.0.0.1:8000/api/projects", { headers: headers })
       .then((response) => {
         const projects = response.data;
         this.setState({
           projects: projects,
+          redirect: false,
         });
       })
       .catch((error) => console.log(error));
@@ -111,12 +185,19 @@ class App extends React.Component {
         });
       })
       .catch((error) => console.log(error));
+    console.log(this.state.todos);
   }
 
   render() {
+    console.log("redirect", this.state.redirect);
     return (
       <BrowserRouter>
         <div>
+          {this.state.redirect ? (
+            <Navigate to={this.state.redirect} />
+          ) : (
+            <div />
+          )}
           <Navbar
             isAuth={this.isAuth.bind(this)}
             logOut={this.logOut.bind(this)}
@@ -127,7 +208,25 @@ class App extends React.Component {
               <Route path="/" element={<UserList users={this.state.users} />} />
               <Route
                 path="/projects"
-                element={<ProjectList projects={this.state.projects} />}
+                element={
+                  <ProjectList
+                    projects={this.state.projects}
+                    deleteProject={(id) => this.deleteProject(id)}
+                  />
+                }
+              />
+
+              <Route
+                exact
+                path="/projects/create"
+                element={
+                  <CreateProjectForm
+                    users={this.state.users}
+                    createProject={(name, url, users) => {
+                      this.createProject(name, url, users);
+                    }}
+                  />
+                }
               />
 
               <Route
@@ -158,7 +257,26 @@ class App extends React.Component {
               <Route
                 exact
                 path="/todos"
-                element={<TodoList todos={this.state.todos} />}
+                element={
+                  <TodoList
+                    todos={this.state.todos}
+                    deleteTodo={(id) => this.deleteTodo(id).bind(this)}
+                  />
+                }
+              />
+
+              <Route
+                exact
+                path="/todos/create"
+                element={
+                  <CreateTodoForm
+                    users={this.state.users}
+                    projects={this.state.projects}
+                    createTodo={(project, user, description) => {
+                      this.createTodo(project, user, description);
+                    }}
+                  />
+                }
               />
             </Routes>
           </div>
