@@ -55,8 +55,6 @@ class App extends React.Component {
     if (this.isAuth()) {
       return {
         Authorization: "Token " + this.state.token,
-
-        // "Cache-Control": "no-store",
       };
     }
     return {};
@@ -93,33 +91,34 @@ class App extends React.Component {
   deleteTodo(id) {
     console.log("delete:", id);
     const headers = this.get_headers();
-    fetch(`http://127.0.0.1:8000/api/todo/${id}`, {
-      method: "DELETE",
-      headers: headers,
-      cache: "reload",
-    }).then((response) => {
-      this.get_data();
-    });
 
-    // .delete(`http://127.0.0.1:8000/api/todo/${id}`, { headers, headers })
-    // .then((response) => {
-    //   console.log(response);
-    //   this.get_data();
-    // })
-    // .catch((error) => console.log(error));
+    axios
+     .delete(`http://127.0.0.1:8000/api/todo/${id}`, { headers, headers })
+     .then((response) => {
+       console.log(response);
+       this.get_data();
+     })
+     .catch((error) => console.log(error));
   }
 
   deleteProject(id) {
     const headers = this.get_headers();
-    fetch(`http://127.0.0.1:8000/api/projects/${id}/`, {
-      method: "DELETE",
-      headers: headers,
-      cache: "reload",
-    }).then((response) => {
-      this.setState({
-        projects: this.state.projects.filter((item) => item.id !== id),
-      });
-    });
+//    fetch(`http://127.0.0.1:8000/api/projects/${id}/`, {
+//      method: "DELETE",
+//      headers: headers,
+//      cache: "reload",
+//    }).then((response) => {
+//      this.setState({
+//        projects: this.state.projects.filter((item) => item.id !== id),
+//      });
+//    });
+  axios
+     .delete(`http://127.0.0.1:8000/api/projects/${id}`, { headers, headers })
+     .then((response) => {
+       console.log(response);
+       this.get_data();
+     })
+     .catch((error) => console.log(error));
   }
 
   createTodo(project, user, description) {
@@ -260,7 +259,7 @@ class App extends React.Component {
                 element={
                   <TodoList
                     todos={this.state.todos}
-                    deleteTodo={(id) => this.deleteTodo(id).bind(this)}
+                    deleteTodo={(id) => this.deleteTodo(id)}
                   />
                 }
               />
