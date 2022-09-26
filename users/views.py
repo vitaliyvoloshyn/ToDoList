@@ -7,7 +7,7 @@ from .serializers import CustomUserModelSerializer, CustomUserModelSerializerNew
 
 
 class CustomUserViewSet(ModelViewSet):
-    # permission_classes = [permissions.DjangoModelPermissions]
+    permission_classes = [permissions.DjangoModelPermissions]
     queryset = CustomUser.objects.all()
 
     def get_serializer_class(self):

@@ -1,0 +1,46 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres:13.7
+    privileged: true
+    restart: always
+    ports:
+      - 5435:5432
+    environment:
+      POSTGRES_DB: 'djangoproject'
+      POSTGRES_USER: 'djangouser'
+      POSTGRES_PASSWORD: 'password'
+
+  backend:
+    build: .
+    privileged: true
+    restart: always
+    expose:
+      - 8080
+    depends_on:
+      - db
+    command: bash -c "
+      python manage.py migrate &&
+      gunicorn todolist.wsgi -b 0.0.0.0:8080
+      "
+    environment:
+      DJANGO_SETTINGS_MODULE: todolist.settings.production
+
+  nginx:
+    build: ./nginx
+    privileged: true
+    restart: always
+    ports:
+      - 8000:80
+    depends_on:
+      - backend
+
+  frontend:
+    build: ./frontend
+    privileged: true
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - nginx

@@ -4,7 +4,7 @@ import os
 from django.core.management import BaseCommand
 
 from todo.models import ProjectModel, TodoModel
-from todolist.settings import BASE_DIR
+from todolist.settings.debug_pg import BASE_DIR
 from users.models import CustomUser
 
 
